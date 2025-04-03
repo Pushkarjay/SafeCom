@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Messages - Safecom</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="js/theme.js" defer></script>
+    <script src="js/main.js" defer></script>
+    <script src="js/messages.js" defer></script>
+    <style>
+        /* Messages specific styles */
+        .messages-container {
+            display: flex;
+            height: calc(100vh - var(--header-height) - var(--spacing-xl) * 2 - 40px);
+            background-color: var(--bg-primary);
+            border-radius: var(--border-radius-lg);
+            overflow: hidden;
+            box-shadow: 0 2px 10px var(--shadow-color);
+        }
+        
+        .conversations-sidebar {
+            width: 300px;
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .conversations-header {
+            padding: var(--spacing-md);
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .conversations-search {
+            display: flex;
+            align-items: center;
+            background-color: var(--bg-tertiary);
+            border-radius: var(--border-radius-md);
+            padding: 0 var(--spacing-md);
+        }
+        
+        .conversations-search i {
+            color: var(--text-tertiary);
+            margin-right: var(--spacing-sm);
+        }
+        
+        .conversations-search input {
+            background: transparent;
+            border: none;
+            height: 36px;
+            width: 100%;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+        }
+        
+        .conversations-search input:focus {
+            outline: none;
+        }
+        
+        .conversation-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: var(--spacing-sm);
+        }
+        
+        .conversation-item {
+            display: flex;
+            align-items: center;
+            padding: var(--spacing-md);
+            border-radius: var(--border-radius-md);
+            margin-bottom: var(--spacing-sm);
+            cursor: pointer;
+            transition: background-color var(--transition-fast);
+            position: relative;
+        }
+        
+        .conversation-item:hover {
+            background-color: var(--bg-tertiary);
+        }
+        
+        .conversation-item.active {
+            background-color: rgba(59, 130, 246, 0.1);
+        }
+        
+        .conversation-avatar {
+            position: relative;
+            margin-right: var(--spacing-md);
+        }
+        
+        .conversation-avatar img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+        
+        .status-indicator {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            border: 2px solid var(--bg-primary);
+        }
+        
+        .status-indicator.online {
+            background-color: var(--success-color);
+        }
+        
+        .status-indicator.offline {
+            background-color: var(--text-tertiary);
+        }
+        
+        .conversation-content {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .conversation-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-xs);
+        }
+        
+        .conversation-header h3 {
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .conversation-time {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+        }
+        
+        .conversation-last-message {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin: 0;
+        }
+        
+        .conversation-badge {
+            position: absolute;
+            top: 50%;
+            right: var(--spacing-md);
+            transform: translateY(-50%);
+            background-color: var(--primary-color);
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 600;
+            height: 18px;
+            min-width: 18px;
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 var(--spacing-xs);
+        }
+        
+        .messages-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .conversation-details {
+            display: flex;
+            align-items: center;
+            padding: var(--spacing-md);
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .conversation-details-avatar {
+            position: relative;
+            margin-right: var(--spacing-md);
+        }
+        
+        .conversation-details-avatar img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+        
+        .conversation-details-info h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin: 0 0 var(--spacing-xs);
+        }
+        
+        .conversation-status {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+        }
+        
+        .conversation-status.online {
+            color: var(--success-color);
+        }
+        
+        .conversation-actions {
+            margin-left: auto;
+            display: flex;
+            gap: var(--spacing-sm);
+        }
+        
+        .conversation-action-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            color: var(--text-secondary);
+            transition: all var(--transition-fast);
+        }
+        
+        .conversation-action-btn:hover {
+            background-color: var(--bg-tertiary);
+            color: var(--primary-color);
+        }
+        
+        .messages-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: var(--spacing-md);
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md);
+        }
+        
+        .message-item {
+            display: flex;
+            max-width: 70%;
+        }
+        
+        .message-item.sent {
+            align-self: flex-end;
+        }
+        
+        .message-item.received {
+            align-self: flex-start;
+        }
+        
+        .message-content {
+            padding: var(--spacing-md);
+            border-radius: var(--border-radius-md);
+        }
+        
+        .message-item.sent .message-content {
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: var(--border-radius-md) var(--border-radius-md) 0 var(--border-radius-md);
+        }
+        
+        .message-item.received .message-content {
+            background-color: var(--bg-tertiary);
+            color: var(--text-primary);
+            border-radius: var(--border-radius-md) var(--border-radius-md) var(--border-radius-md) 0;
+        }
+        
+        .message-text {
+            margin-bottom: var(--spacing-xs);
+            line-height: 1.4;
+        }
+        
+        .message-time {
+            font-size: 0.75rem;
+            opacity: 0.8;
+            text-align: right;
+        }
+        
+        .message-form {
+            padding: var(--spacing-md);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+        
+        .message-input {
+            flex: 1;
+            padding: var(--spacing-md);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-md);
+            background-color: var(--bg-tertiary);
+            color: var(--text-primary);
+            resize: none;
+        }
+        
+        .message-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+        
+        .message-send-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: white;
+            transition: background-color var(--transition-fast);
+        }
+        
+        .message-send-btn:hover {
+            background-color: var(--primary-hover);
+        }
+        
+        .empty-state {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: var(--spacing-xl);
+            color: var(--text-tertiary);
+            text-align: center;
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .empty-state h3 {
+            font-size: 1.25rem;
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .empty-state p {
+            max-width: 400px;
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        @media (max-width: 768px) {
+            .messages-container {
+                flex-direction: column;
+                height: auto;
+            }
+            
+            .conversations-sidebar {
+                width: 100%;
+                height: 300px;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+            }
+            
+            .messages-content {
+                height: 500px;
+            }
+        }
+    </style>
+</head>
+<body class="light-theme">
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="img/logo.svg" alt="Safecom Logo" class="logo">
+                <h2>Safecom</h2>
+            </div>
+            
+            <div class="user-profile">
+                <img src="img/avatar.svg" alt="User Avatar" class="avatar">
+                <div class="user-info">
+                    <h3>John Doe</h3>
+                    <p>Team Lead</p>
+                </div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="dashboard.html"><i class="fas fa-home"></i> Dashboard</a></li>
+                    <li><a href="tasks.html"><i class="fas fa-tasks"></i> Tasks</a></li>
+                    <li><a href="my-tasks.html"><i class="fas fa-clipboard-check"></i> My Tasks</a></li>
+                    <li class="active"><a href="messages.html"><i class="fas fa-envelope"></i> Messages <span class="badge">5</span></a></li>
+                    <li><a href="team.html"><i class="fas fa-users"></i> Team</a></li>
+                    <li><a href="profile.html"><i class="fas fa-user"></i> My Profile</a></li>
+                    <li><a href="settings.html"><i class="fas fa-cog"></i> Settings</a></li>
+                </ul>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <button id="theme-toggle" class="theme-toggle">
+                    <i class="fas fa-moon"></i>
+                    <span>Dark Mode</span>
+                </button>
+                <button class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <header class="top-header">
+                <div class="search-container">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search messages...">
+                </div>
+                <div class="header-actions">
+                    <button class="notification-btn">
+                        <i class="fas fa-bell"></i>
+                        <span class="badge">3</span>
+                    </button>
+                    <button class="create-task-btn">
+                        <i class="fas fa-plus"></i>
+                        <span>Create Task</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Messages Content -->
+            <div class="dashboard-container">
+                <h1 class="page-title">Messages</h1>
+                
+                <div class="messages-container">
+                    <!-- Conversations Sidebar -->
+                    <div class="conversations-sidebar">
+                        <div class="conversations-header">
+                            <div class="conversations-search">
+                                <i class="fas fa-search"></i>
+                                <input type="text" placeholder="Search conversations...">
+                            </div>
+                        </div>
+                        
+                        <div class="conversation-list">
+                            <!-- Conversation items will be populated by JavaScript -->
+                        </div>
+                    </div>
+                    
+                    <!-- Messages Content -->
+                    <div class="messages-content">
+                        <div class="conversation-details">
+                            <div class="conversation-details-avatar">
+                                <img src="img/avatar.svg" alt="Sarah Johnson">
+                                <span class="status-indicator online"></span>
+                            </div>
+                            <div class="conversation-details-info">
+                                <h3 class="conversation-title">Sarah Johnson</h3>
+                                <span class="conversation-status online">Online</span>
+                            </div>
+                            <div class="conversation-actions">
+                                <button class="conversation-action-btn"><i class="fas fa-phone"></i></button>
+                                <button class="conversation-action-btn"><i class="fas fa-video"></i></button>
+                                <button class="conversation-action-btn"><i class="fas fa-info-circle"></i></button>
+                            </div>
+                        </div>
+                        
+                        <div class="messages-list">
+                            <!-- Messages will be populated by JavaScript -->
+                        </div>
+                        
+                        <form id="message-form" class="message-form">
+                            <textarea id="message-input" class="message-input" placeholder="Type a message..." rows="1"></textarea>
+                            <button type="submit" class="message-send-btn"><i class="fas fa-paper-plane"></i></button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Task Creation Modal -->
+    <div class="modal" id="create-task-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Create New Task</h2>
+                <button class="close-modal"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="create-task-form">
+                    <div class="form-group">
+                        <label for="task-title">Task Title</label>
+                        <input type="text" id="task-title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="task-description">Description</label>
+                        <textarea id="task-description" rows="4" required></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="task-priority">Priority</label>
+                            <select id="task-priority" required>
+                                <option value="low">Low</option>
+                                <option value="medium">Medium</option>
+                                <option value="high">High</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="task-deadline">Deadline</label>
+                            <input type="date" id="task-deadline" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="task-assignee">Assign To</label>
+                        <select id="task-assignee">
+                            <option value="">Unassigned</option>
+                            <option value="john">John Doe</option>
+                            <option value="sarah">Sarah Johnson</option>
+                            <option value="mike">Mike Wilson</option>
+                            <option value="lisa">Lisa Brown</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="task-time-slot">Time Slot</label>
+                        <select id="task-time-slot" required>
+                            <option value="9-11">9:00 AM - 11:00 AM</option>
+                            <option value="11-1">11:30 AM - 1:30 PM</option>
+                            <option value="2-4">2:00 PM - 4:00 PM</option>
+                            <option value="4-6">4:30 PM - 6:30 PM</option>
+                            <option value="flexible">Flexible</option>
+                        </select>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="cancel-btn">Cancel</button>
+                        <button type="submit" class="submit-btn">Create Task</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Panel -->
+    <div class="notification-panel" id="notification-panel">
+        <div class="notification-header">
+            <h3>Notifications</h3>
+            <button class="mark-all-read">Mark all as read</button>
+        </div>
+        <div class="notification-list">
+            <div class="notification-item unread">
+                <div class="notification-icon"><i class="fas fa-tasks"></i></div>
+                <div class="notification-content">
+                    <p>New task "Database Backup" is available</p>
+                    <span class="notification-time">Just now</span>
+                </div>
+                <div class="notification-actions">
+                    <button class="notification-action-btn"><i class="fas fa-eye"></i></button>
+                </div>
+            </div>
+            
+            <div class="notification-item unread">
+                <div class="notification-icon"><i class="fas fa-comment"></i></div>
+                <div class="notification-content">
+                    <p>Mike sent you a message about "Network Security Audit"</p>
+                    <span class="notification-time">1 hour ago</span>
+                </div>
+                <div class="notification-actions">
+                    <button class="notification-action-btn"><i class="fas fa-reply"></i></button>
+                </div>
+            </div>
+            
+            <div class="notification-item unread">
+                <div class="notification-icon"><i class="fas fa-user-plus"></i></div>
+                <div class="notification-content">
+                    <p>You were assigned to "Server Maintenance"</p>
+                    <span class="notification-time">3 hours ago</span>
+                </div>
+                <div class="notification-actions">
+                    <button class="notification-action-btn"><i class="fas fa-eye"></i></button>
+                </div>
+            </div>
+            
+            <div class="notification-item">
+                <div class="notification-icon"><i class="fas fa-check-circle"></i></div>
+                <div class="notification-content">
+                    <p>"Weekly Report" task was completed</p>
+                    <span class="notification-time">Yesterday</span>
+                </div>
+            </div>
+        </div>
+        <div class="notification-footer">
+            <a href="#notifications">View all notifications</a>
+        </div>
+    </div>
+
+    <div class="overlay" id="overlay"></div>
+</body>
+</html>
+
