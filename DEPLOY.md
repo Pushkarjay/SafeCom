@@ -1,31 +1,26 @@
-# 🚀 Render Deployment Guide for SafeCom
+# 🚀 Render Static Site Deployment Guide for SafeCom
 
 ## Quick Setup
 
 ### 1. Connect Repository to Render
 1. Go to [Render.com](https://render.com) and sign up/login
-2. Click **"New"** → **"Web Service"**
+2. Click **"New"** → **"Static Site"**
 3. Connect your GitHub account and select the `SafeCom` repository
 4. Configure the service:
 
 ### 2. Service Configuration
 ```yaml
-Name: safecom-frontend
-Runtime: Node
-Build Command: npm install
-Start Command: npm start
-Instance Type: Free (or paid for better performance)
+Name: safecom-frontend-tempo-render
+Build Command: (leave empty)
+Publish Directory: . (root directory)
 ```
 
-### 3. Environment Variables (Optional)
-```bash
-NODE_ENV=production
-```
-
-### 4. Auto-Deploy Settings
+### 3. Auto-Deploy Settings
 - ✅ Auto-Deploy: Yes
 - 🌿 Branch: main
 - 📁 Root Directory: (leave empty)
+
+**Important**: Make sure you select **"Static Site"** not "Web Service"
 
 ## 🌐 Live URLs
 

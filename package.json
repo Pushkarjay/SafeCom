@@ -4,10 +4,10 @@
   "description": "SafeCom Task Management System - Frontend",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
+    "start": "echo 'Static site ready'",
     "dev": "npx http-server . -p 8080 -o",
-    "build": "echo 'Static site - no build needed'",
-    "deploy": "echo 'Deploying to Render - automatic on git push'",
+    "build": "echo 'No build process needed for static site'",
+    "deploy": "echo 'Deploy to Render static site'",
     "test": "echo 'No tests specified'"
   },
   "keywords": [
@@ -21,12 +21,8 @@
   ],
   "author": "Pushkarjay Ajay <pushkarjay.ajay1@gmail.com>",
   "license": "MIT",
-  "dependencies": {
-    "express": "^4.18.2"
-  },
-  "devDependencies": {
-    "http-server": "^14.1.1"
-  },
+  "dependencies": {},
+  "devDependencies": {},
   "engines": {
     "node": ">=16.0.0"
   },

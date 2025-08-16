@@ -1,0 +1,34 @@
+@echo off
+echo 🚀 Deploying SafeCom to Render...
+echo 📁 Root directory structure ready for Render!
+
+echo 📦 Files ready for Render deployment:
+echo    ✅ HTML files in root directory
+echo    ✅ CSS files in /css directory
+echo    ✅ JS files in /js directory  
+echo    ✅ Images in /img directory
+echo    ✅ package.json configured for Render
+echo    ✅ render.yaml deployment configuration
+echo    ✅ _redirects file for routing
+echo.
+
+echo 🌐 To deploy to Render:
+echo    1. Commit all changes:
+echo       git add .
+echo       git commit -m "Deploy to Render"
+echo.
+echo    2. Push to GitHub:
+echo       git push origin main
+echo.
+echo    3. Connect to Render (one-time setup):
+echo       - Go to https://render.com
+echo       - Click 'New' → 'Static Site'
+echo       - Connect your GitHub repository
+echo       - Auto-deploy will be enabled
+echo.
+
+echo ✅ Your app will be available at: https://safecom-frontend.onrender.com
+echo 🔗 Backend API: https://safecom-backend-render-tempo.onrender.com
+echo 📝 Render will automatically deploy on every git push!
+
+pause

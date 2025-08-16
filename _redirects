@@ -1,13 +1,12 @@
-# Redirect all routes to index.html for client-side routing
-/*    /index.html   200
+# Redirects for static site hosting on Render
+# SPA routing - redirect to respective HTML files
+/dashboard      /dashboard.html    200
+/login          /login.html        200
+/signup         /signup.html       200
+/tasks          /tasks.html        200
+/messages       /messages.html     200
+/my-tasks       /my-tasks.html     200
+/team           /team.html         200
 
-# Redirect old paths
-/frontend/*  /:splat  301
-/public/*    /:splat  301
-
-# Security headers
-/*
-  X-Frame-Options: DENY
-  X-Content-Type-Options: nosniff
-  Referrer-Policy: strict-origin-when-cross-origin
-  X-XSS-Protection: 1; mode=block
+# Default redirect to home
+/*              /index.html        200
