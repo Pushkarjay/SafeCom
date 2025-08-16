@@ -1,0 +1,13 @@
+# Redirect all routes to index.html for client-side routing
+/*    /index.html   200
+
+# Redirect old paths
+/frontend/*  /:splat  301
+/public/*    /:splat  301
+
+# Security headers
+/*
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-XSS-Protection: 1; mode=block
