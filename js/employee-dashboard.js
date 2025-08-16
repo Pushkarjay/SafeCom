@@ -38,6 +38,11 @@ function initializeEmployeeDashboard() {
         userNameElement.textContent = user.name || 'Employee';
     }
     
+    // Show demo mode indicator if applicable
+    if (user.isDemoMode) {
+        showDemoModeIndicator();
+    }
+    
     // Theme handling
     const themeToggle = document.getElementById('themeToggle');
     if (themeToggle) {
@@ -525,6 +530,27 @@ function toggleSidebar() {
     const sidebar = document.querySelector('.sidebar');
     if (sidebar) {
         sidebar.classList.toggle('collapsed');
+    }
+}
+
+function showDemoModeIndicator() {
+    // Create demo mode banner
+    const demoBanner = document.createElement('div');
+    demoBanner.className = 'demo-mode-banner';
+    demoBanner.innerHTML = `
+        <div class="demo-banner-content">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span>Demo Mode - Backend service unavailable. Using sample data.</span>
+            <button onclick="this.parentElement.parentElement.remove()" class="demo-banner-close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    `;
+    
+    // Add banner to the top of the main content
+    const mainContent = document.querySelector('.main-content');
+    if (mainContent) {
+        mainContent.insertBefore(demoBanner, mainContent.firstChild);
     }
 }
 

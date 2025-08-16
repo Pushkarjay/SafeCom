@@ -117,6 +117,38 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       } catch (error) {
         console.error('Login error:', error)
+        
+        // Check if it's a network connectivity issue
+        if (error.name === 'TypeError' || error.message.includes('fetch')) {
+          // Backend is likely down - offer demo mode
+          const useDemo = confirm('Backend service is currently unavailable. Would you like to continue in demo mode?')
+          
+          if (useDemo) {
+            // Create demo user data
+            const demoUserData = {
+              name: userType.charAt(0).toUpperCase() + userType.slice(1) + ' User',
+              email: email,
+              role: userType,
+              id: 'demo-' + userType,
+              isDemoMode: true
+            };
+            
+            // Store demo data
+            localStorage.setItem("safecom-token", "demo-token-" + Date.now())
+            localStorage.setItem("safecom-user", JSON.stringify(demoUserData))
+            
+            // Redirect to appropriate dashboard
+            const dashboards = {
+              admin: 'admin-dashboard.html',
+              customer: 'customer-dashboard.html', 
+              employee: 'employee-dashboard.html'
+            };
+            
+            window.location.href = dashboards[userType] || 'dashboard.html';
+            return;
+          }
+        }
+        
         alert('Network error. Please check your connection and try again.')
       } finally {
         // Restore button state
@@ -183,6 +215,38 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       } catch (error) {
         console.error('Signup error:', error)
+        
+        // Check if it's a network connectivity issue
+        if (error.name === 'TypeError' || error.message.includes('fetch')) {
+          // Backend is likely down - offer demo mode
+          const useDemo = confirm('Backend service is currently unavailable. Would you like to continue in demo mode?')
+          
+          if (useDemo) {
+            // Create demo user data
+            const demoUserData = {
+              name: name,
+              email: email,
+              role: userType,
+              id: 'demo-' + userType + '-' + Date.now(),
+              isDemoMode: true
+            };
+            
+            // Store demo data
+            localStorage.setItem("safecom-token", "demo-token-" + Date.now())
+            localStorage.setItem("safecom-user", JSON.stringify(demoUserData))
+            
+            // Redirect to appropriate dashboard
+            const dashboards = {
+              admin: 'admin-dashboard.html',
+              customer: 'customer-dashboard.html', 
+              employee: 'employee-dashboard.html'
+            };
+            
+            window.location.href = dashboards[userType] || 'dashboard.html';
+            return;
+          }
+        }
+        
         alert('Network error. Please check your connection and try again.')
       } finally {
         // Restore button state

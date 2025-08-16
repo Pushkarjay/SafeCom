@@ -872,3 +872,45 @@
   }
 }
 
+/* Demo Mode Banner */
+.demo-mode-banner {
+  background: linear-gradient(135deg, #FEF3C7 0%, #FEF08A 100%);
+  border: 1px solid #F59E0B;
+  border-radius: var(--border-radius-md);
+  margin: var(--spacing-lg);
+  margin-bottom: 0;
+}
+
+.demo-banner-content {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md) var(--spacing-lg);
+  color: #92400E;
+}
+
+.demo-banner-content i.fa-exclamation-triangle {
+  color: #F59E0B;
+  font-size: 1.1rem;
+}
+
+.demo-banner-content span {
+  flex: 1;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.demo-banner-close {
+  background: none;
+  border: none;
+  color: #92400E;
+  cursor: pointer;
+  padding: var(--spacing-xs);
+  border-radius: var(--border-radius-sm);
+  transition: background-color var(--transition-fast);
+}
+
+.demo-banner-close:hover {
+  background-color: rgba(146, 64, 14, 0.1);
+}
+
