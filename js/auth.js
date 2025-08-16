@@ -8,9 +8,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (userTypeSelect) userTypeSelect.value = userType;
     
     const credentials = {
-      admin: { email: 'admin@safecom.com', password: 'admin123' },
-      customer: { email: 'customer@safecom.com', password: 'customer123' },
-      employee: { email: 'employee@safecom.com', password: 'employee123' }
+      admin: { email: 'admin@safecom.com', password: 'admin@123' },
+      customer: { email: 'customer@safecom.com', password: 'customer@123' },
+      employee: { email: 'employee@safecom.com', password: 'employee@123' }
     };
     
     const cred = credentials[userType];
