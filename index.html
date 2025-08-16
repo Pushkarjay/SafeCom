@@ -8,6 +8,27 @@
     <link rel="stylesheet" href="css/auth.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="js/theme.js" defer></script>
+    <script>
+        // Check if user is already authenticated
+        document.addEventListener('DOMContentLoaded', function() {
+            const token = localStorage.getItem('safecom-token');
+            const user = JSON.parse(localStorage.getItem('safecom-user') || '{}');
+            
+            if (token && user.role) {
+                // User is authenticated, redirect to appropriate dashboard
+                const dashboards = {
+                    admin: 'admin-dashboard.html',
+                    customer: 'customer-dashboard.html',
+                    employee: 'employee-dashboard.html'
+                };
+                
+                const dashboardUrl = dashboards[user.role];
+                if (dashboardUrl) {
+                    window.location.href = dashboardUrl;
+                }
+            }
+        });
+    </script>
 </head>
 <body class="light-theme">
     <div class="home-container">

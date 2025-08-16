@@ -1,4 +1,25 @@
 document.addEventListener("DOMContentLoaded", () => {
+  // Demo credentials
+  window.fillDemoCredentials = (userType) => {
+    const userTypeSelect = document.getElementById("userType");
+    const emailInput = document.getElementById("email");
+    const passwordInput = document.getElementById("password");
+    
+    if (userTypeSelect) userTypeSelect.value = userType;
+    
+    const credentials = {
+      admin: { email: 'admin@safecom.com', password: 'admin123' },
+      customer: { email: 'customer@safecom.com', password: 'customer123' },
+      employee: { email: 'employee@safecom.com', password: 'employee123' }
+    };
+    
+    const cred = credentials[userType];
+    if (cred && emailInput && passwordInput) {
+      emailInput.value = cred.email;
+      passwordInput.value = cred.password;
+    }
+  };
+
   // Theme toggle for auth pages
   const themeToggle = document.getElementById("theme-toggle")
   if (themeToggle) {
@@ -48,9 +69,15 @@ document.addEventListener("DOMContentLoaded", () => {
     loginForm.addEventListener("submit", async (e) => {
       e.preventDefault()
 
+      const userType = document.getElementById("userType").value
       const email = document.getElementById("email").value
       const password = document.getElementById("password").value
       const submitBtn = loginForm.querySelector('button[type="submit"]')
+      
+      if (!userType) {
+        alert('Please select a user type');
+        return;
+      }
       
       // Show loading state
       const originalText = submitBtn.textContent
@@ -63,18 +90,27 @@ document.addEventListener("DOMContentLoaded", () => {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ email, password })
+          body: JSON.stringify({ email, password, userType })
         })
 
         const data = await response.json()
 
         if (response.ok) {
+          // Add user type to user data
+          const userData = { ...data.user, role: userType };
+          
           // Store user data and token
           localStorage.setItem("safecom-token", data.token)
-          localStorage.setItem("safecom-user", JSON.stringify(data.user))
+          localStorage.setItem("safecom-user", JSON.stringify(userData))
           
-          // Redirect to dashboard
-          window.location.href = "dashboard.html"
+          // Redirect based on user role
+          const dashboards = {
+            admin: 'admin-dashboard.html',
+            customer: 'customer-dashboard.html', 
+            employee: 'employee-dashboard.html'
+          };
+          
+          window.location.href = dashboards[userType] || 'dashboard.html';
         } else {
           // Show error message
           alert(data.message || 'Login failed. Please try again.')
@@ -100,6 +136,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const email = document.getElementById("email").value
       const password = document.getElementById("password").value
       const confirmPassword = document.getElementById("confirm-password").value
+      const userType = document.getElementById("userType")?.value || 'customer'
       const submitBtn = signupForm.querySelector('button[type="submit"]')
 
       // Validate passwords match
@@ -119,18 +156,27 @@ document.addEventListener("DOMContentLoaded", () => {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ name, email, password })
+          body: JSON.stringify({ name, email, password, userType })
         })
 
         const data = await response.json()
 
         if (response.ok) {
+          // Add user type to user data
+          const userData = { ...data.user, role: userType };
+          
           // Store user data and token
           localStorage.setItem("safecom-token", data.token)
-          localStorage.setItem("safecom-user", JSON.stringify(data.user))
+          localStorage.setItem("safecom-user", JSON.stringify(userData))
           
-          // Redirect to dashboard
-          window.location.href = "dashboard.html"
+          // Redirect based on user role
+          const dashboards = {
+            admin: 'admin-dashboard.html',
+            customer: 'customer-dashboard.html', 
+            employee: 'employee-dashboard.html'
+          };
+          
+          window.location.href = dashboards[userType] || 'dashboard.html';
         } else {
           // Show error message
           alert(data.message || 'Registration failed. Please try again.')
@@ -146,4 +192,23 @@ document.addEventListener("DOMContentLoaded", () => {
     })
   }
 })
+
+// Authentication helpers
+function checkAuth() {
+  const token = localStorage.getItem('safecom-token');
+  const user = JSON.parse(localStorage.getItem('safecom-user') || '{}');
+  
+  if (!token || !user.role) {
+    window.location.href = 'login.html';
+    return false;
+  }
+  
+  return true;
+}
+
+function logout() {
+  localStorage.removeItem('safecom-token');
+  localStorage.removeItem('safecom-user');
+  window.location.href = 'login.html';
+}
 

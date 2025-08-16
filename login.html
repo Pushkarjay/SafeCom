@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/auth.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="js/api-config.js" defer></script>
+    <script src="js/role-manager.js" defer></script>
     <script src="js/auth.js" defer></script>
 </head>
 <body class="light-theme">
@@ -38,6 +38,16 @@
                 
                 <form id="login-form" class="auth-form">
                     <div class="auth-form-group">
+                        <label for="userType">Login As</label>
+                        <select id="userType" name="userType" required class="auth-select">
+                            <option value="">Select User Type</option>
+                            <option value="admin">Administrator</option>
+                            <option value="customer">Customer</option>
+                            <option value="employee">Employee</option>
+                        </select>
+                    </div>
+                    
+                    <div class="auth-form-group">
                         <label for="email">Email</label>
                         <input type="email" id="email" name="email" required>
                     </div>
@@ -59,20 +69,32 @@
                     <button type="submit" class="auth-submit-btn">Log In</button>
                 </form>
                 
-                <div class="auth-divider">
-                    <span>OR</span>
-                </div>
-                
-                <div class="social-login">
-                    <button class="social-login-btn">
-                        <i class="fab fa-google"></i>
-                        <span>Google</span>
-                    </button>
-                    
-                    <button class="social-login-btn">
-                        <i class="fab fa-microsoft"></i>
-                        <span>Microsoft</span>
-                    </button>
+                <!-- Demo Credentials -->
+                <div class="demo-credentials">
+                    <h4>Demo Accounts:</h4>
+                    <div class="demo-grid">
+                        <div class="demo-item" onclick="fillDemoCredentials('admin')">
+                            <i class="fas fa-user-shield"></i>
+                            <div>
+                                <strong>Admin</strong>
+                                <small>admin@safecom.com</small>
+                            </div>
+                        </div>
+                        <div class="demo-item" onclick="fillDemoCredentials('customer')">
+                            <i class="fas fa-user-tie"></i>
+                            <div>
+                                <strong>Customer</strong>
+                                <small>customer@safecom.com</small>
+                            </div>
+                        </div>
+                        <div class="demo-item" onclick="fillDemoCredentials('employee')">
+                            <i class="fas fa-user-hard-hat"></i>
+                            <div>
+                                <strong>Employee</strong>
+                                <small>employee@safecom.com</small>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 
                 <div class="auth-footer">
