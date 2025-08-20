@@ -64,23 +64,39 @@ async function loadDashboardStats() {
         const token = localStorage.getItem('safecom-token');
         
         // Load total tasks
-        const tasksResponse = await fetch('https://safecom-backend-render-tempo.onrender.com/api/admin/tasks', {
+    const tasksResponse = await fetch(`${SafeComConfig.API_BASE}/api/admin/tasks`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         
         if (tasksResponse.ok) {
-            const tasks = await tasksResponse.json();
+            const raw = await tasksResponse.json();
+            const tasks = (typeof TaskUtils !== 'undefined' && TaskUtils.normalizeTasks) ? TaskUtils.normalizeTasks(raw) : raw;
             updateTaskStats(tasks);
         }
         
         // Load total users
-        const usersResponse = await fetch('https://safecom-backend-render-tempo.onrender.com/api/admin/users', {
+    const usersResponse = await fetch(`${SafeComConfig.API_BASE}/api/admin/users`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         
         if (usersResponse.ok) {
             const users = await usersResponse.json();
             updateUserStats(users);
+        }
+
+        // Analytics summary (optional UI elements)
+        const analyticsResponse = await fetch(`${SafeComConfig.API_BASE}/api/admin/analytics/summary`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (analyticsResponse.ok) {
+            const summary = await analyticsResponse.json();
+            // Populate if elements exist; otherwise just log for now
+            const completionEl = document.getElementById('completionRate');
+            if (completionEl) completionEl.textContent = summary.completionRate + '%';
+            const overdueRateEl = document.getElementById('overdueRate');
+            if (overdueRateEl) overdueRateEl.textContent = summary.overdueRate + '%';
+            const criticalEl = document.getElementById('criticalTasks');
+            if (criticalEl) criticalEl.textContent = summary.criticalTasks;
         }
         
     } catch (error) {
@@ -94,8 +110,7 @@ function updateTaskStats(tasks) {
     const totalTasks = tasks.length;
     const pendingTasks = tasks.filter(task => task.status === 'pending').length;
     const overdueTasks = tasks.filter(task => task.status === 'overdue' || 
-        (new Date(task.dueDate) < new Date() && task.status !== 'completed')).length;
-    
+        (task.dueDate && new Date(task.dueDate) < new Date() && task.status !== 'completed')).length;
     document.getElementById('totalTasks').textContent = totalTasks;
     document.getElementById('pendingTasks').textContent = pendingTasks;
     document.getElementById('overdueTasks').textContent = overdueTasks;
@@ -117,7 +132,7 @@ function setDemoStats() {
 async function loadRecentActivity() {
     try {
         const token = localStorage.getItem('safecom-token');
-        const response = await fetch('https://safecom-backend-render-tempo.onrender.com/api/admin/activity', {
+    const response = await fetch(`${SafeComConfig.API_BASE}/api/admin/activity`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         
@@ -209,7 +224,7 @@ async function handleCreateUser(e) {
     
     try {
         const token = localStorage.getItem('safecom-token');
-        const response = await fetch('https://safecom-backend-render-tempo.onrender.com/api/admin/users/create', {
+    const response = await fetch(`${SafeComConfig.API_BASE}/api/admin/users/create`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

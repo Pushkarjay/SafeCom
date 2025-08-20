@@ -64,7 +64,7 @@ class ConnectionStatus {
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
             
-            const response = await fetch('https://safecom-backend-render-tempo.onrender.com/health', {
+            const response = await fetch(`${SafeComConfig.API_BASE}/health`, {
                 method: 'GET',
                 signal: controller.signal
             });

@@ -73,15 +73,26 @@ function loadEmployeeNavigation() {
 async function loadDashboardStats() {
     try {
         const token = localStorage.getItem('safecom-token');
-        const response = await fetch('https://safecom-backend-render-tempo.onrender.com/api/employee/tasks', {
+    const response = await fetch(`${SafeComConfig.API_BASE}/api/employee/tasks`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         
         if (response.ok) {
-            const tasks = await response.json();
+            const raw = await response.json();
+            const tasks = (typeof TaskUtils !== 'undefined' && TaskUtils.normalizeTasks) ? TaskUtils.normalizeTasks(raw) : raw;
             updateTaskStats(tasks);
         } else {
             setDemoStats();
+        }
+
+        // Load analytics summary
+        const analyticsResponse = await fetch(`${SafeComConfig.API_BASE}/api/employee/analytics/summary`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (analyticsResponse.ok) {
+            const summary = await analyticsResponse.json();
+            const completionEl = document.getElementById('analyticsCompletionRate');
+            if (completionEl) completionEl.textContent = summary.completionRate + '%';
         }
         
     } catch (error) {
@@ -119,12 +130,13 @@ async function loadTodaysTasks() {
     try {
         const token = localStorage.getItem('safecom-token');
         const today = new Date().toISOString().split('T')[0];
-        const response = await fetch(`https://safecom-backend-render-tempo.onrender.com/api/employee/tasks?date=${today}`, {
+    const response = await fetch(`${SafeComConfig.API_BASE}/api/employee/tasks?date=${today}`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         
         if (response.ok) {
-            const tasks = await response.json();
+            const raw = await response.json();
+            const tasks = (typeof TaskUtils !== 'undefined' && TaskUtils.normalizeTasks) ? TaskUtils.normalizeTasks(raw) : raw;
             displayTodaysTasks(tasks);
         } else {
             displayDemoTasks();
@@ -205,7 +217,7 @@ function displayDemoTasks() {
 async function loadRecentActivity() {
     try {
         const token = localStorage.getItem('safecom-token');
-        const response = await fetch('https://safecom-backend-render-tempo.onrender.com/api/employee/activity', {
+    const response = await fetch(`${SafeComConfig.API_BASE}/api/employee/activity`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         
@@ -255,7 +267,7 @@ function displayDemoActivity() {
 async function loadWeeklyProgress() {
     try {
         const token = localStorage.getItem('safecom-token');
-        const response = await fetch('https://safecom-backend-render-tempo.onrender.com/api/employee/weekly-progress', {
+    const response = await fetch(`${SafeComConfig.API_BASE}/api/employee/weekly-progress`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         
@@ -409,7 +421,7 @@ function formatElapsedTime(milliseconds) {
 async function logTaskTime(taskId, timeSpent) {
     try {
         const token = localStorage.getItem('safecom-token');
-        const response = await fetch(`https://safecom-backend-render-tempo.onrender.com/api/employee/tasks/${taskId}/time`, {
+    const response = await fetch(`${SafeComConfig.API_BASE}/api/employee/tasks/${taskId}/time`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -457,7 +469,7 @@ async function handleTaskUpdate(e) {
     
     try {
         const token = localStorage.getItem('safecom-token');
-        const response = await fetch(`https://safecom-backend-render-tempo.onrender.com/api/employee/tasks/${taskId}`, {
+    const response = await fetch(`${SafeComConfig.API_BASE}/api/employee/tasks/${taskId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',

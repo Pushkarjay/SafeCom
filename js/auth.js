@@ -85,35 +85,12 @@ document.addEventListener("DOMContentLoaded", () => {
       submitBtn.disabled = true
 
       try {
-        const response = await fetch('https://safecom-backend-render-tempo.onrender.com/api/auth/login', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ email, password, userType })
-        })
-
-        const data = await response.json()
-
-        if (response.ok) {
-          // Add user type to user data
-          const userData = { ...data.user, role: userType };
-          
-          // Store user data and token
-          localStorage.setItem("safecom-token", data.token)
-          localStorage.setItem("safecom-user", JSON.stringify(userData))
-          
-          // Redirect based on user role
-          const dashboards = {
-            admin: 'admin-dashboard.html',
-            customer: 'customer-dashboard.html', 
-            employee: 'employee-dashboard.html'
-          };
-          
-          window.location.href = dashboards[userType] || 'dashboard.html';
+        const result = await SafeComAPI.login({ email, password, userType });
+        if(result.ok){
+          const dashboards = { admin:'admin-dashboard.html', customer:'customer-dashboard.html', employee:'employee-dashboard.html' };
+          window.location.href = dashboards[result.data.user.role] || 'dashboard.html';
         } else {
-          // Show error message
-          alert(data.message || 'Login failed. Please try again.')
+          alert(result.message || 'Login failed. Please try again.');
         }
       } catch (error) {
         console.error('Login error:', error)
@@ -183,35 +160,12 @@ document.addEventListener("DOMContentLoaded", () => {
       submitBtn.disabled = true
 
       try {
-        const response = await fetch('https://safecom-backend-render-tempo.onrender.com/api/auth/register', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ name, email, password, userType })
-        })
-
-        const data = await response.json()
-
-        if (response.ok) {
-          // Add user type to user data
-          const userData = { ...data.user, role: userType };
-          
-          // Store user data and token
-          localStorage.setItem("safecom-token", data.token)
-          localStorage.setItem("safecom-user", JSON.stringify(userData))
-          
-          // Redirect based on user role
-          const dashboards = {
-            admin: 'admin-dashboard.html',
-            customer: 'customer-dashboard.html', 
-            employee: 'employee-dashboard.html'
-          };
-          
-          window.location.href = dashboards[userType] || 'dashboard.html';
+        const result = await SafeComAPI.register({ name, email, password, userType });
+        if(result.ok){
+          const dashboards = { admin:'admin-dashboard.html', customer:'customer-dashboard.html', employee:'employee-dashboard.html' };
+          window.location.href = dashboards[result.data.user.role] || 'dashboard.html';
         } else {
-          // Show error message
-          alert(data.message || 'Registration failed. Please try again.')
+          alert(result.message || 'Registration failed. Please try again.');
         }
       } catch (error) {
         console.error('Signup error:', error)

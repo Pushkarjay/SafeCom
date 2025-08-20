@@ -95,6 +95,33 @@
                             <p>Overdue Tasks</p>
                         </div>
                     </div>
+                    <div class="stat-card">
+                        <div class="stat-icon success">
+                            <i class="fas fa-percentage"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="completionRate">0%</h3>
+                            <p>Completion Rate</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon warning">
+                            <i class="fas fa-fire"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="criticalTasks">0</h3>
+                            <p>Critical Tasks</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon danger">
+                            <i class="fas fa-hourglass-end"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="overdueRate">0%</h3>
+                            <p>Overdue Rate</p>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Quick Actions -->
@@ -197,6 +224,9 @@
         </div>
     </div>
 
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/task-utils.js"></script>
     <script src="js/role-manager.js"></script>
     <script src="js/connection-status.js"></script>
     <script src="js/auth.js"></script>

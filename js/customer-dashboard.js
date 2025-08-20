@@ -62,17 +62,28 @@ function loadCustomerNavigation() {
 async function loadDashboardStats() {
     try {
         const token = localStorage.getItem('safecom-token');
-        const response = await fetch('https://safecom-backend-render-tempo.onrender.com/api/customer/tasks', {
+    const response = await fetch(`${SafeComConfig.API_BASE}/api/customer/tasks`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         
         if (response.ok) {
-            const tasks = await response.json();
+            const raw = await response.json();
+            const tasks = (typeof TaskUtils !== 'undefined' && TaskUtils.normalizeTasks) ? TaskUtils.normalizeTasks(raw) : raw;
             updateTaskStats(tasks);
             renderTaskChart(tasks);
         } else {
             setDemoStats();
             renderDemoChart();
+        }
+
+        // Customer analytics summary
+        const analyticsResponse = await fetch(`${SafeComConfig.API_BASE}/api/customer/analytics/summary`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (analyticsResponse.ok) {
+            const summary = await analyticsResponse.json();
+            const el = document.getElementById('customerCompletionRate');
+            if (el) el.textContent = summary.completionRate + '%';
         }
         
     } catch (error) {
@@ -105,12 +116,13 @@ function setDemoStats() {
 async function loadRecentTasks() {
     try {
         const token = localStorage.getItem('safecom-token');
-        const response = await fetch('https://safecom-backend-render-tempo.onrender.com/api/customer/tasks?limit=5', {
+    const response = await fetch(`${SafeComConfig.API_BASE}/api/customer/tasks?limit=5`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         
         if (response.ok) {
-            const tasks = await response.json();
+            const raw = await response.json();
+            const tasks = (typeof TaskUtils !== 'undefined' && TaskUtils.normalizeTasks) ? TaskUtils.normalizeTasks(raw) : raw;
             displayRecentTasks(tasks);
         } else {
             displayDemoTasks();
@@ -285,7 +297,7 @@ async function handleCreateTask(e) {
     
     try {
         const token = localStorage.getItem('safecom-token');
-        const response = await fetch('https://safecom-backend-render-tempo.onrender.com/api/customer/tasks', {
+    const response = await fetch(`${SafeComConfig.API_BASE}/api/customer/tasks`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
