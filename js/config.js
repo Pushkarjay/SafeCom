@@ -29,6 +29,17 @@
     resetApiBase(){
       localStorage.removeItem('safecom-api-base');
       this.API_BASE = DEFAULTS[detectEnv()];
+    },
+    
+    // Firebase Configuration
+    firebase: {
+      projectId: 'safecom-task-management',
+      projectNumber: '344799045102',
+      apiKey: 'AIzaSyCxoXVuxbQxiNMkJnXyF1PKpXmLoEo-cMU',
+      authDomain: 'safecom-task-management.firebaseapp.com',
+      storageBucket: 'safecom-task-management.appspot.com',
+      messagingSenderId: '344799045102',
+      appId: '1:344799045102:web:YOUR_WEB_APP_ID' // Add this when you create Web app in Firebase Console
     }
   };
 
