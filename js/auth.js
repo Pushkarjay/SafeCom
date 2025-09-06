@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // Demo credentials
+  // Demo credentials helper
   window.fillDemoCredentials = (userType) => {
     const userTypeSelect = document.getElementById("userType");
     const emailInput = document.getElementById("email");
@@ -7,16 +7,18 @@ document.addEventListener("DOMContentLoaded", () => {
     
     if (userTypeSelect) userTypeSelect.value = userType;
     
+    // Demo credentials for testing - replace with your actual test accounts
     const credentials = {
-      admin: { email: 'admin@safecom.com', password: 'admin@123' },
-      customer: { email: 'customer@safecom.com', password: 'customer@123' },
-      employee: { email: 'employee@safecom.com', password: 'employee@123' }
+      admin: { email: 'admin@safecom.com', password: '' },
+      customer: { email: 'customer@safecom.com', password: '' },
+      employee: { email: 'employee@safecom.com', password: '' }
     };
     
     const cred = credentials[userType];
     if (cred && emailInput && passwordInput) {
       emailInput.value = cred.email;
-      passwordInput.value = cred.password;
+      // Password intentionally left empty for security - enter manually
+      passwordInput.placeholder = `Enter ${userType} password`;
     }
   };
 
